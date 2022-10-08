@@ -1,0 +1,152 @@
+<div class="container mt-5 px-2" id="main-container">
+
+  <div class="mb-2 d-flex justify-content-end align-items-center">
+
+    <div class="px-2">
+<!--      <button type="button" class="btn btn-light" (click)="open(addModal,'add')">Add Question</button>-->
+      <a routerLink="/questions/add">Add Question</a>
+    </div>
+  </div>
+<!--  <div class="alert alert-warning" role="alert" *ngIf="responseError">-->
+<!--    {{responseErrorBody}}-->
+<!--  </div>-->
+  <div class="table-responsive">
+    <table class="table table-responsive table-borderless">
+
+      <thead>
+      <tr class="bg-light">
+        <th scope="col"  >#</th>
+        <th scope="col" >Name</th>
+        <th scope="col" >Level</th>
+        <th scope="col" >Type</th>
+        <th scope="col" >Category</th>
+        <th scope="col" >Sub-Category</th>
+        <th scope="col" >Mark</th>
+        <th scope="col" >Expected Time</th>
+        <th scope="col" ></th>
+        <th scope="col" ></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let question of questions | paginate: { itemsPerPage: 10, currentPage: p};let i = index ">
+        <td>{{i+1}}</td>
+        <td>{{question?.name}}</td>
+        <td>{{question?.level}}</td>
+        <td>{{question?.type}}</td>
+        <td>{{question?.category_name}}</td>
+        <td>{{question?.sub_category}}</td>
+        <td>{{question?.mark}}</td>
+        <td>{{question?.expected_time}} seconds</td>
+        <td><a class="text-danger" (click)="open(deleteModal,'delete',question)">Delete</a></td>
+        <td><a class="text-success"(click)="open(editModal,'edit',question)">Edit</a></td>
+      </tr>
+      </tbody>
+    </table>
+    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  </div>
+  <ng-template #deleteModal>
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Question</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are You Sure You Want To Delete This Question  ?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" (click)="onDeleteQuestion(deletedQuestion?.id)">Delete</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="modal.dismiss()">Close</button>
+        </div>
+  </ng-template>
+  <ng-template #editModal>
+    <div class="modal-header">
+      <h5 class="modal-title">Edit Question {{editQuestion?.name}}</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <form #editFrom = "ngForm">
+        <div class="mb-2">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" ngModel="{{editQuestion?.name}}" name="name" class="form-control" id="name"  placeholder="Name">
+        </div>
+        <input type="hidden" ngModel="{{editQuestion?.id}}"  name="id" >
+        <input type="hidden" ngModel="{{editQuestion?.created_by}}" name="created_by" >
+        <input type="hidden" ngModel="{{editQuestion?.created_at}}" name="created_at">
+        <div class="mb-2">
+          <label for="level" class="form-label">Level</label>
+          <input type="text" ngModel="{{editQuestion?.level}}" name="level" class="form-control" id="level" placeholder="level">
+        </div>
+        <div class="mb-2">
+          <label for="type" class="form-label">Type</label>
+          <input type="text" ngModel="{{editQuestion?.type}}" name="type" class="form-control" id="type" placeholder="type">
+        </div>
+        <div class="mb-2">
+          <label  class="form-label">Category</label>
+          <select class="form-select" ngModel name="category_id">
+            <option *ngFor="let c of startCategories" value="{{c?.id}}" [selected]="editQuestion?.category_id === c?.id">{{c?.name}}</option>
+          </select>
+<!--          <input type="text" ngModel="{{editQuestion?.category_id}}" name="category_id" class="form-control" placeholder="category">-->
+        </div>
+        <div class="mb-2">
+          <label for="sub_category" class="form-label">Sub Category</label>
+          <input type="text" ngModel="{{editQuestion?.sub_category}}" name="sub_category" class="form-control" id="sub_category" placeholder="sub category">
+        </div>
+        <div class="mb-2">
+          <label for="sub_category" class="form-label">Mark</label>
+          <input type="number" ngModel="{{editQuestion?.mark}}" name="mark" class="form-control" id="mark" placeholder="mark">
+        </div>
+
+        <div class="mb-2">
+          <label for="sub_category" class="form-label">Expected Time in seconds</label>
+          <input type="number" ngModel="{{editQuestion?.expected_time}}" name="expected_time" class="form-control" id="expected_time" placeholder="expected time">
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="" data-dismiss="modal" class="btn btn-secondary" (click)="modal.dismiss()">Close</button>
+          <button (click)="onUpdateQuestion(editFrom.value)" data-dismiss="modal" class="btn btn-primary" >Save changes</button>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+  <ng-template #addModal>
+    <div class="modal-header">
+      <h5 class="modal-title">Add Question</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <form #addFrom="ngForm" (ngSubmit)="onAddQuestion(addFrom)">
+        <div class="mb-2">
+          <label  class="form-label">Name</label>
+          <input type="text" ngModel name="name" class="form-control"   placeholder="Name">
+        </div>
+        <div class="mb-2">
+          <label  class="form-label">Level</label>
+          <input type="text" ngModel name="level" class="form-control" placeholder="level">
+        </div>
+        <div class="mb-2">
+          <label for="type" class="form-label">Type</label>
+          <input type="text" ngModel name="type" class="form-control"  placeholder="type">
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Category</label>
+          <input type="text" ngModel name="category_id" class="form-control"  placeholder="category">
+        </div>
+        <div class="mb-2">
+          <label for="sub_category" class="form-label">Sub Category</label>
+          <input type="text" ngModel name="sub_category" class="form-control" placeholder="sub category">
+        </div>
+        <div class="mb-2">
+          <label for="sub_category" class="form-label">Mark</label>
+          <input type="number" ngModel name="mark" class="form-control"  placeholder="mark">
+        </div>
+
+        <div class="mb-2">
+          <label for="sub_category" class="form-label">Expected Time in seconds</label>
+          <input type="number" ngModel name="expected_time" class="form-control" placeholder="expected time">
+        </div>
+        <div class="modal-footer">
+          <button type="button"  data-dismiss="modal" class="btn btn-secondary" (click)="modal.dismiss()">Close</button>
+          <button [disabled]="addFrom.invalid" type="submit" class="btn btn-primary" >Add</button>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+</div>

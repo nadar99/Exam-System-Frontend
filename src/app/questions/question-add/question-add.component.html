@@ -1,0 +1,64 @@
+<div class="container p-3">
+  <h3 class="mt-2">Create a new Question</h3>
+  <div class="mb-3">
+  <form #addFrom="ngForm"   (ngSubmit)="onAddQuestion(addFrom)">
+  <div class="mb-2 col-md-5">
+    <label class="form-label">Name</label>
+    <input type="text" ngModel name="name" class="form-control" placeholder="Name">
+  </div>
+  <div class="mb-2 col-md-5">
+    <label  class="form-label">Level</label>
+    <input type="text" ngModel name="level" class="form-control" placeholder="level">
+  </div>
+  <div class="mb-2 col-md-5">
+    <label  class="form-label">Type</label>
+    <input type="text" ngModel name="type" class="form-control"  placeholder="type">
+  </div>
+  <div class="mb-2 col-md-5">
+    <label  class="form-label">Category</label>
+    <div class="row">
+      <div class="col">
+        <select class="form-select" ngModel="" name="category_id">
+          <option value="" disabled>select category</option>
+        <option *ngFor="let c of categories" value="{{c?.id}}">{{c?.name}}</option>
+      </select>
+      </div>
+      <div class="col">
+        <button type="button" class="btn btn-success" (click)="onshowAddCategoryForm()">Add</button>
+      </div>
+    </div>
+    <form *ngIf="showAddCategoryForm" #addCategoryForm="ngForm" (ngSubmit)="onAddCategory(addCategoryForm)">
+      <div class="mb-2 mt-3">
+        <div class="row">
+          <div class="col">
+            <input type="text" ngModel name="name" class="form-control"  placeholder="Name">
+          </div>
+          <div class="col">
+            <button class="btn btn-success" >save</button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+<!--    <input type="text" ngModel name="category_id" class="form-control"  placeholder="category">-->
+  </div>
+  <div class="mb-2 col-md-5">
+    <label  class="form-label">Sub Category</label>
+    <input type="text" ngModel name="sub_category" class="form-control" placeholder="sub category">
+  </div>
+  <div class="mb-2 col-md-5">
+    <label  class="form-label">Mark</label>
+    <input type="number" ngModel name="mark" class="form-control"  placeholder="mark">
+  </div>
+
+  <div class="mb-2 col-md-5">
+    <label class="form-label">Expected Time in seconds</label>
+    <input type="number" ngModel name="expected_time" class="form-control" placeholder="expected time">
+  </div>
+  <div>
+    <a class="btn btn-secondary me-3" routerLink="../" >Back</a>
+    <button [disabled]="addFrom.invalid" type="submit" class="btn btn-primary" >Save</button>
+  </div>
+  </form>
+  </div>
+</div>
